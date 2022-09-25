@@ -28,6 +28,10 @@ const getParticipants = (fields, { limit = 20, page = 0 }) => {
   searchParams.append("limit", limit);
   searchParams.append("start", page * limit);
 
+  Object.keys(fields).forEach((key) => {
+    searchParams.append(key, fields[key]);
+  });
+
   return fetch("/api/participants?" + searchParams.toString())
     .then((result) => result.json())
     .then(({ results, ...rest }) => ({
@@ -36,17 +40,22 @@ const getParticipants = (fields, { limit = 20, page = 0 }) => {
     }));
 };
 
+const TableHeader = ({ field, children }) => {
+  return <th>{children}</th>;
+};
+
 export default function Home() {
   const [participants, setParticipants] = useState([]);
   const [error, setError] = useState();
   const [limit, setLimit] = useState(20);
   const [page, setPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
+  const [search, setSearch] = useState("");
 
   const pages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
-    getParticipants({}, { page, limit })
+    getParticipants({ q: search }, { page, limit })
       .then(({ results, metadata }) => {
         setTotalResults(metadata.total);
         setParticipants(results);
@@ -57,7 +66,7 @@ export default function Home() {
           errorCode,
         });
       });
-  }, [page]);
+  }, [page, search]);
 
   const nextPage = () => {
     setPage(page + 1);
@@ -65,6 +74,10 @@ export default function Home() {
 
   const prevPage = () => {
     setPage(page - 1);
+  };
+
+  const onSearchChange = ({ target }) => {
+    setSearch(target.value);
   };
 
   return (
@@ -78,17 +91,23 @@ export default function Home() {
         <p>
           Pages: {pages} Results per page: {limit}
         </p>
+
+        <label>
+          Search all fields
+          <input id="search" value={search} onChange={onSearchChange} />
+        </label>
       </div>
+
       <table>
         <thead>
           <tr>
-            <th>Reference</th>
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Address</th>
-            <th>Postcode</th>
-            <th>Date of Birth</th>
-            <th>Trial Status</th>
+            <TableHeader>Reference</TableHeader>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Phone Number</TableHeader>
+            <TableHeader>Address</TableHeader>
+            <TableHeader>Postcode</TableHeader>
+            <TableHeader>Date of BirTableHeader</TableHeader>
+            <TableHeader>Trial Status</TableHeader>
           </tr>
         </thead>
 

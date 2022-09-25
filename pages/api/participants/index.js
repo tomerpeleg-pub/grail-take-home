@@ -1,14 +1,24 @@
 // TODO: move into mocks, this file should be generic so it can be used unmodified
 import mockData from "../../../mocks/trial_participants.json";
 
-const getParticipants = (fields = {}) => {
+const getParticipants = ({ q, ...fields } = {}) => {
   const keys = Object.keys(fields);
 
-  return mockData.filter((participant) =>
-    keys.every((key) =>
+  return mockData.filter((participant) => {
+    const matchesAllFields = keys.every((key) =>
       participant[key]?.toLowerCase().includes(fields[key]?.toLowerCase())
-    )
-  );
+    );
+
+    if (!q) {
+      return matchesAllFields;
+    }
+
+    const matchesGeneralSearch = Object.values(participant).some((value) =>
+      value?.toLowerCase().includes(q.toLowerCase())
+    );
+
+    return matchesAllFields && matchesGeneralSearch;
+  });
 };
 
 /**
@@ -24,7 +34,6 @@ export default async function handler(req, res) {
   try {
     const searchResults = await getParticipants(fields);
     const totalResults = searchResults.length;
-    console.log("slicing", { totalResults, start, limit });
     const paginatedResults = searchResults.slice(startNum, startNum + limitNum);
 
     res.status(200).json({
