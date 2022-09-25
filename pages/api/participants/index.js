@@ -1,16 +1,14 @@
 // TODO: move into mocks, this file should be generic so it can be used unmodified
 import mockData from "../../../mocks/trial_participants.json";
 
-const getParticipants = (fields = {}, limit = 20, start = 0) => {
+const getParticipants = (fields = {}) => {
   const keys = Object.keys(fields);
 
-  return mockData
-    .filter((participant) =>
-      keys.every((key) =>
-        participant[key]?.toLowerCase().includes(fields[key]?.toLowerCase())
-      )
+  return mockData.filter((participant) =>
+    keys.every((key) =>
+      participant[key]?.toLowerCase().includes(fields[key]?.toLowerCase())
     )
-    .slice(start, start + limit);
+  );
 };
 
 /**
@@ -24,14 +22,19 @@ export default async function handler(req, res) {
   const startNum = parseInt(start);
 
   try {
-    const searchResults = await getParticipants(fields, limitNum, startNum);
+    const searchResults = await getParticipants(fields);
+    const totalResults = searchResults.length;
+    console.log("slicing", { totalResults, start, limit });
+    const paginatedResults = searchResults.slice(startNum, startNum + limitNum);
 
     res.status(200).json({
       metadata: {
         limit: limitNum,
         start: startNum,
+        total: totalResults,
+        pages: Math.ceil(searchResults.length / paginatedResults.length),
       },
-      results: searchResults,
+      results: paginatedResults,
     });
   } catch (e) {
     res.status(500).json({

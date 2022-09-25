@@ -23,28 +23,62 @@ const transformParticipant = ({
   trialStatus: trial_status,
 });
 
+const getParticipants = (fields, { limit = 20, page = 0 }) => {
+  const searchParams = new URLSearchParams();
+  searchParams.append("limit", limit);
+  searchParams.append("start", page * limit);
+
+  return fetch("/api/participants?" + searchParams.toString())
+    .then((result) => result.json())
+    .then(({ results, ...rest }) => ({
+      ...rest,
+      results: results.map(transformParticipant),
+    }));
+};
+
 export default function Home() {
   const [participants, setParticipants] = useState([]);
   const [error, setError] = useState();
+  const [limit, setLimit] = useState(20);
+  const [page, setPage] = useState(0);
+  const [totalResults, setTotalResults] = useState(0);
+
+  const pages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
-    fetch("/api/participants")
-      .then((result) => result.json())
-      .then(({ results }) => results.map(transformParticipant))
-      .then((results) => setParticipants(results))
+    getParticipants({}, { page, limit })
+      .then(({ results, metadata }) => {
+        setTotalResults(metadata.total);
+        setParticipants(results);
+      })
       .catch(({ error, errorCode }) => {
         console.log("[ERROR] error fetching participants", {
           error,
           errorCode,
         });
       });
-  }, []);
+  }, [page]);
+
+  const nextPage = () => {
+    setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    setPage(page - 1);
+  };
 
   return (
     <Layout
       title="New Beginnings Trial Admin"
       metaDesecription="New Beginnings trial admin interface"
     >
+      <div>
+        <p>Total results: {totalResults}</p>
+        <p>Page: {page}</p>
+        <p>
+          Pages: {pages} Results per page: {limit}
+        </p>
+      </div>
       <table>
         <thead>
           <tr>
@@ -69,8 +103,8 @@ export default function Home() {
               dateOfBirth,
               trialStatus,
             }) => (
-              <tr>
-                <td>{id}</td>
+              <tr key={id}>
+                <th>{id}</th>
                 <td>{name}</td>
                 <td>{phoneNumber}</td>
                 <td>{address}</td>
@@ -82,6 +116,13 @@ export default function Home() {
           )}
         </tbody>
       </table>
+
+      <button onClick={prevPage} disabled={page === 0}>
+        Prev
+      </button>
+      <button onClick={nextPage} disabled={page === pages}>
+        Next
+      </button>
     </Layout>
   );
 }
