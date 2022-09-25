@@ -51,8 +51,9 @@ export default function Home() {
   const [page, setPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
   const [search, setSearch] = useState("");
+  const [searchFields, setSearchFields] = useState({});
 
-  const pages = Math.ceil(totalResults / limit);
+  const pages = Math.floor(totalResults / limit);
 
   useEffect(() => {
     getParticipants({ q: search }, { page, limit })
@@ -79,6 +80,8 @@ export default function Home() {
   const onSearchChange = ({ target }) => {
     setSearch(target.value);
   };
+
+  const modifyParticipant = (id) => () => {};
 
   return (
     <Layout
@@ -130,6 +133,9 @@ export default function Home() {
                 <td>{postcode}</td>
                 <td>{dateOfBirth}</td>
                 <td>{trialStatus}</td>
+                <td>
+                  <button onClick={modifyParticipant(id)}>Edit</button>
+                </td>
               </tr>
             )
           )}
