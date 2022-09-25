@@ -29,6 +29,8 @@ I ran out of time. This is what I would do given a few more hours:
 - Finish adding unit tests for the rest of the components and utils. (only Pagination.spec.js is there for now)
 - Move all state logic into a state manager, e.g. redux or mobx.
 - Replace seperate CRUD endpoints (create, delete, update) with a single /participant endpoint and use the request method to determine the desired task. (I created it this way initially for simplicity)
+- Add loading and error states
+- Add validation for the form inputs
 - Add E2E/Behavioural test.
 - Add functionality for searching by specific field.
 - Add sorting by field.
