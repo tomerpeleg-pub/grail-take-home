@@ -35,6 +35,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@emotion/react", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:11.10.4"],\
             ["@emotion/styled", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:11.10.4"],\
+            ["@mui/icons-material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["@mui/material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["@mui/styled-engine-sc", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["eslint", "npm:8.24.0"],\
@@ -646,6 +647,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@mui-core-downloads-tracker-npm-5.10.6-e7f785c42d-59ad1c3c77.zip/node_modules/@mui/core-downloads-tracker/",\
           "packageDependencies": [\
             ["@mui/core-downloads-tracker", "npm:5.10.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@mui/icons-material", [\
+        ["npm:5.10.6", {\
+          "packageLocation": "./.yarn/cache/@mui-icons-material-npm-5.10.6-161f1269de-c8577b5252.zip/node_modules/@mui/icons-material/",\
+          "packageDependencies": [\
+            ["@mui/icons-material", "npm:5.10.6"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6", {\
+          "packageLocation": "./.yarn/__virtual__/@mui-icons-material-virtual-29dabe0904/0/cache/@mui-icons-material-npm-5.10.6-161f1269de-c8577b5252.zip/node_modules/@mui/icons-material/",\
+          "packageDependencies": [\
+            ["@mui/icons-material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
+            ["@babel/runtime", "npm:7.19.0"],\
+            ["@mui/material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
+            ["@types/mui__material", null],\
+            ["@types/react", null],\
+            ["react", "npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@mui/material",\
+            "@types/mui__material",\
+            "@types/react",\
+            "react"\
           ],\
           "linkType": "HARD"\
         }]\
@@ -2526,6 +2554,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["grail-take-home", "workspace:."],\
             ["@emotion/react", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:11.10.4"],\
             ["@emotion/styled", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:11.10.4"],\
+            ["@mui/icons-material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["@mui/material", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["@mui/styled-engine-sc", "virtual:10f7d755babc19348bcfe706875922841f8d0ab4cdad95b6dd76cf7daa012f32a0559e6456da997db91379ce7f52847aebedf68cdc8f8d767bc2e70b870f7599#npm:5.10.6"],\
             ["eslint", "npm:8.24.0"],\

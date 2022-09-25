@@ -10,6 +10,9 @@ import Dialog from "@mui/material/Dialog";
 import { Participant } from "../components/Participant";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const transformParticipant = ({
   id,
@@ -83,6 +86,23 @@ const createParticipant = (participant) => {
   );
 };
 
+const deleteParticipant = (participantId) => {
+  const params = new URLSearchParams(participantId);
+
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: participantId }),
+  };
+
+  return fetch("/api/participants/delete", options).then((result) =>
+    result.json()
+  );
+};
+
 const TableHeader = ({ field, children }) => {
   return <th>{children}</th>;
 };
@@ -128,7 +148,7 @@ export default function Home() {
     updateParticipant(selectedParticipant).then((newParticipant) => {
       // TODO: hacky
       setSelectedParticipant(newParticipant);
-      setRefresh(true);
+      setRefresh(!refresh);
     });
   };
 
@@ -136,7 +156,7 @@ export default function Home() {
     createParticipant(selectedParticipant).then((newParticipant) => {
       // TODO: hacky
       setSelectedParticipant(newParticipant);
-      setRefresh(true);
+      setRefresh(!refresh);
     });
   };
 
@@ -144,9 +164,14 @@ export default function Home() {
     setSearch(target.value);
   };
 
-  const modifyParticipant = (participantId) => () => {
+  const onEditParticipantClick = (participantId) => () => {
     setShowEditModal(true);
     setSelectedParticipant(participants.find(({ id }) => id === participantId));
+  };
+
+  const onDeleteParticipantClick = (participantId) => () => {
+    deleteParticipant(participantId);
+    setRefresh(!refresh);
   };
 
   const onParticipantChange =
@@ -235,7 +260,18 @@ export default function Home() {
                 <td>{dateOfBirth}</td>
                 <td>{trialStatus}</td>
                 <td>
-                  <button onClick={modifyParticipant(id)}>Edit</button>
+                  <IconButton
+                    aria-label="edit"
+                    onClick={onEditParticipantClick(id)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={onDeleteParticipantClick(id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </td>
               </tr>
             )

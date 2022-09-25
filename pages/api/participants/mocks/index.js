@@ -1,5 +1,5 @@
 import mockData from "./trial_participants.json";
-const participants = [...mockData];
+let participants = [...mockData];
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -55,4 +55,15 @@ export const createParticipant = (participant) => {
   const newParticipant = { ...participant, id: generateId() };
   participants.push(newParticipant);
   return newParticipant;
+};
+
+export const deleteParticipant = (participantId) => {
+  const participant = participants.find(({ id }) => id === participantId);
+
+  if (!participant) {
+    throw new Error("No participant found with that ID");
+  }
+
+  participants = participants.filter(({ id }) => id !== participantId);
+  return true;
 };
