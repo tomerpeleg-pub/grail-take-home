@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Layout } from "../containers/Layout";
 import Box from "@mui/material/Box";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
@@ -8,78 +7,17 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { ParticipantsTable } from "../components/ParticipantsTable";
 import { Pagination } from "../components/Pagination";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import { Layout } from "../containers/Layout";
+import {
+  getParticipants,
+  updateParticipant,
+  createParticipant,
+  deleteParticipant,
+} from "../util";
 
 const theme = createTheme();
-
-const transformParticipant = (participant) => ({
-  ...participant,
-  name: `${participant.firstName} ${participant.lastName}`,
-});
-
-const getParticipants = (fields, { limit = 20, page = 0 }) => {
-  const searchParams = new URLSearchParams(fields);
-  searchParams.append("limit", limit);
-  searchParams.append("start", page * limit);
-
-  return fetch("/api/participants?" + searchParams.toString())
-    .then((result) => result.json())
-    .then(({ results, ...rest }) => ({
-      ...rest,
-      results: results.map(transformParticipant),
-    }));
-};
-
-const updateParticipant = (participant) => {
-  const params = new URLSearchParams(participant);
-
-  const options = {
-    method: "PUT",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(participant),
-  };
-
-  return fetch("/api/participants/update", options).then((result) =>
-    result.json()
-  );
-};
-
-const createParticipant = (participant) => {
-  const params = new URLSearchParams(participant);
-
-  const options = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(participant),
-  };
-
-  return fetch("/api/participants/create", options).then((result) =>
-    result.json()
-  );
-};
-
-const deleteParticipant = (participantId) => {
-  const params = new URLSearchParams(participantId);
-
-  const options = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: participantId }),
-  };
-
-  return fetch("/api/participants/delete", options).then((result) =>
-    result.json()
-  );
-};
 
 export default function Home() {
   const [participants, setParticipants] = useState([]);
