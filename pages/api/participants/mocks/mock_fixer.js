@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 /**
  * This is file is modifying mock data generated using mockaroo.com to match the given spec
@@ -18,10 +18,12 @@ const randNumbers = (n) =>
     .map(() => Math.floor(Math.random() * 10))
     .join("");
 
-const generateId = () => `${randLetters(3)}-${randNumbers(3)}`;
+export const generateId = () => `${randLetters(3)}-${randNumbers(3)}`;
 
-const data = JSON.parse(
-  fs.readFileSync("trial_participants.json", { endoing: "utf8" })
-).map((participant) => ({ ...participant, id: generateId() }));
+const updateMocks = () => {
+  const data = JSON.parse(
+    fs.readFileSync("trial_participants.json", { endoing: "utf8" })
+  ).map((participant) => ({ ...participant, id: generateId() }));
 
-fs.writeFileSync("trial_participants.json", JSON.stringify(data));
+  fs.writeFileSync("trial_participants.json", JSON.stringify(data));
+};

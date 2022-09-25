@@ -13,23 +13,23 @@ import Button from "@mui/material/Button";
 
 const transformParticipant = ({
   id,
-  first_name,
-  last_name,
-  phone_numer,
+  firstName,
+  lastName,
+  phoneNumber,
   address,
   postcode,
-  date_of_birth,
-  trial_status,
+  dateOfBirth,
+  trialStatus,
 }) => ({
   id,
-  firstName: first_name,
-  lastName: last_name,
-  name: `${first_name} ${last_name}`,
-  phoneNumber: phone_numer,
+  firstName: firstName,
+  lastName: lastName,
+  name: `${firstName} ${lastName}`,
+  phoneNumber: phoneNumber,
   address: address,
   postcode: postcode,
-  dateOfBirth: date_of_birth,
-  trialStatus: trial_status,
+  dateOfBirth: dateOfBirth,
+  trialStatus: trialStatus,
 });
 
 const getParticipants = (fields, { limit = 20, page = 0 }) => {
@@ -66,6 +66,23 @@ const updateParticipant = (participant) => {
   );
 };
 
+const createParticipant = (participant) => {
+  const params = new URLSearchParams(participant);
+
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(participant),
+  };
+
+  return fetch("/api/participants/create", options).then((result) =>
+    result.json()
+  );
+};
+
 const TableHeader = ({ field, children }) => {
   return <th>{children}</th>;
 };
@@ -78,7 +95,8 @@ export default function Home() {
   const [totalResults, setTotalResults] = useState(0);
   const [search, setSearch] = useState("");
   const [searchFields, setSearchFields] = useState({});
-  const [showParticipantModal, setShowParticipantModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState({});
   const [refresh, setRefresh] = useState(false);
 
@@ -109,6 +127,15 @@ export default function Home() {
   const onParticipantUpdateClick = () => {
     updateParticipant(selectedParticipant).then((newParticipant) => {
       // TODO: hacky
+      setSelectedParticipant(newParticipant);
+      setRefresh(true);
+    });
+  };
+
+  const onParticipanCreateClick = () => {
+    createParticipant(selectedParticipant).then((newParticipant) => {
+      // TODO: hacky
+      setSelectedParticipant(newParticipant);
       setRefresh(true);
     });
   };
@@ -118,7 +145,7 @@ export default function Home() {
   };
 
   const modifyParticipant = (participantId) => () => {
-    setShowParticipantModal(true);
+    setShowEditModal(true);
     setSelectedParticipant(participants.find(({ id }) => id === participantId));
   };
 
@@ -128,75 +155,35 @@ export default function Home() {
       setSelectedParticipant({ ...selectedParticipant, [prop]: target.value });
     };
 
+  const onOpenCreateModal = () => {
+    setSelectedParticipant({});
+    setShowCreateModal(true);
+  };
+
   return (
     <Layout
       title="New Beginnings Trial Admin"
       metaDesecription="New Beginnings trial admin interface"
     >
-      <Dialog
-        open={showParticipantModal}
-        onClose={() => setShowParticipantModal(false)}
-      >
+      <Dialog open={showEditModal} onClose={() => setShowEditModal(false)}>
         <DialogTitle>Update Participant</DialogTitle>
         <Box>
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_id"
-            label="Reference"
-            value={selectedParticipant.id}
-            onChange={onParticipantChange("id")}
-            disabled
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_first_name"
-            label="First Name"
-            value={selectedParticipant.firstName}
-            onChange={onParticipantChange("firstName")}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_last_name"
-            label="Surname"
-            value={selectedParticipant.lastName}
-            onChange={onParticipantChange("lastName")}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_address"
-            label="Address"
-            value={selectedParticipant.address}
-            onChange={onParticipantChange("address")}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_postcode"
-            label="Postcode"
-            value={selectedParticipant.postcode}
-            onChange={onParticipantChange("postcode")}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_dob"
-            label="Date of Birth"
-            value={selectedParticipant.dateOfBirth}
-            onChange={onParticipantChange("dateOfBirth")}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="participant_trial_status"
-            label="Trial Status"
-            value={selectedParticipant.trialStatus}
-            onChange={onParticipantChange("trialStatus")}
+          <Participant
+            onChange={onParticipantChange}
+            participant={selectedParticipant}
           />
           <Button onClick={onParticipantUpdateClick}>Update</Button>
+        </Box>
+      </Dialog>
+
+      <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <DialogTitle>Update Participant</DialogTitle>
+        <Box>
+          <Participant
+            onChange={onParticipantChange}
+            participant={selectedParticipant}
+          />
+          <Button onClick={onParticipanCreateClick}>Create</Button>
         </Box>
       </Dialog>
 
@@ -211,6 +198,8 @@ export default function Home() {
           Search all fields
           <input id="search" value={search} onChange={onSearchChange} />
         </label>
+
+        <Button onClick={onOpenCreateModal}>Create new participant</Button>
       </div>
 
       <table>

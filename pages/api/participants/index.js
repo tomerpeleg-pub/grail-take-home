@@ -1,4 +1,4 @@
-import { getParticipants } from "../../../mocks";
+import { getParticipants } from "./mocks";
 
 /**
  * Get the participants for the trial.

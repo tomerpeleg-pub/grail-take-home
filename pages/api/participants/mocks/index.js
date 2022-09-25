@@ -1,7 +1,21 @@
-// TODO: move into mocks, this file should be generic so it can be used unmodified
 import mockData from "./trial_participants.json";
-
 const participants = [...mockData];
+
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const randLetters = (n) =>
+  new Array(n)
+    .fill(0)
+    .map(() => LETTERS[Math.floor(Math.random() * LETTERS.length)])
+    .join("");
+
+const randNumbers = (n) =>
+  new Array(n)
+    .fill(0)
+    .map(() => Math.floor(Math.random() * 10))
+    .join("");
+
+export const generateId = () => `${randLetters(3)}-${randNumbers(3)}`;
 
 export const getParticipants = ({ q, ...fields } = {}) => {
   const keys = Object.keys(fields);
@@ -35,4 +49,10 @@ export const updatParticipant = (participantId, fields) => {
   });
 
   return participant;
+};
+
+export const createParticipant = (participant) => {
+  const newParticipant = { ...participant, id: generateId() };
+  participants.push(newParticipant);
+  return newParticipant;
 };
