@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
 
 export const Participant = ({ participant, onChange }) => (
   <Box>
@@ -57,9 +58,24 @@ export const Participant = ({ participant, onChange }) => (
       fullWidth
       margin="normal"
       id="participant_trialStatus"
+      select
       label="Trial Status"
       value={participant.trialStatus}
       onChange={onChange("trialStatus")}
-    />
+      helperText="Please select the tiral status for this participant"
+    >
+      <MenuItem key="active" value="active">
+        Active
+      </MenuItem>
+      <MenuItem key="withdrawn" value="withdrawn">
+        Withdrawn
+      </MenuItem>
+      <MenuItem key="finished" value="finished">
+        Finished
+      </MenuItem>
+      <MenuItem key="error" value="error">
+        Error
+      </MenuItem>
+    </TextField>
   </Box>
 );

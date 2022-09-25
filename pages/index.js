@@ -1,48 +1,26 @@
 import { useEffect, useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
 import { Layout } from "../containers/Layout";
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import { Participant } from "../components/Participant";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import { ParticipantsTable } from "../components/ParticipantsTable";
+import { Pagination } from "../components/Pagination";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 
-const transformParticipant = ({
-  id,
-  firstName,
-  lastName,
-  phoneNumber,
-  address,
-  postcode,
-  dateOfBirth,
-  trialStatus,
-}) => ({
-  id,
-  firstName: firstName,
-  lastName: lastName,
-  name: `${firstName} ${lastName}`,
-  phoneNumber: phoneNumber,
-  address: address,
-  postcode: postcode,
-  dateOfBirth: dateOfBirth,
-  trialStatus: trialStatus,
+const theme = createTheme();
+
+const transformParticipant = (participant) => ({
+  ...participant,
+  name: `${participant.firstName} ${participant.lastName}`,
 });
 
 const getParticipants = (fields, { limit = 20, page = 0 }) => {
-  const searchParams = new URLSearchParams();
+  const searchParams = new URLSearchParams(fields);
   searchParams.append("limit", limit);
   searchParams.append("start", page * limit);
-
-  Object.keys(fields).forEach((key) => {
-    searchParams.append(key, fields[key]);
-  });
 
   return fetch("/api/participants?" + searchParams.toString())
     .then((result) => result.json())
@@ -103,22 +81,16 @@ const deleteParticipant = (participantId) => {
   );
 };
 
-const TableHeader = ({ field, children }) => {
-  return <th>{children}</th>;
-};
-
 export default function Home() {
   const [participants, setParticipants] = useState([]);
-  const [error, setError] = useState();
-  const [limit, setLimit] = useState(20);
+  const limit = 20; // TODO: add method for changings results on the page
   const [page, setPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
   const [search, setSearch] = useState("");
-  const [searchFields, setSearchFields] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState({});
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(false); // TODO: hacky way to get react to re-render. Should be updating the local state instead.
 
   const pages = Math.floor(totalResults / limit);
 
@@ -136,17 +108,8 @@ export default function Home() {
       });
   }, [page, search, refresh]);
 
-  const nextPage = () => {
-    setPage(page + 1);
-  };
-
-  const prevPage = () => {
-    setPage(page - 1);
-  };
-
   const onParticipantUpdateClick = () => {
     updateParticipant(selectedParticipant).then((newParticipant) => {
-      // TODO: hacky
       setSelectedParticipant(newParticipant);
       setRefresh(!refresh);
     });
@@ -154,7 +117,6 @@ export default function Home() {
 
   const onParticipanCreateClick = () => {
     createParticipant(selectedParticipant).then((newParticipant) => {
-      // TODO: hacky
       setSelectedParticipant(newParticipant);
       setRefresh(!refresh);
     });
@@ -186,105 +148,72 @@ export default function Home() {
   };
 
   return (
-    <Layout
-      title="New Beginnings Trial Admin"
-      metaDesecription="New Beginnings trial admin interface"
-    >
-      <Dialog open={showEditModal} onClose={() => setShowEditModal(false)}>
-        <DialogTitle>Update Participant</DialogTitle>
-        <Box>
-          <Participant
-            onChange={onParticipantChange}
-            participant={selectedParticipant}
-          />
-          <Button onClick={onParticipantUpdateClick}>Update</Button>
-        </Box>
-      </Dialog>
+    <ThemeProvider theme={theme}>
+      <Layout
+        title="New Beginnings Trial Admin"
+        metaDesecription="New Beginnings trial admin interface"
+      >
+        <Dialog open={showEditModal} onClose={() => setShowEditModal(false)}>
+          <DialogTitle>Update Participant</DialogTitle>
+          <Box p={2}>
+            <Participant
+              onChange={onParticipantChange}
+              participant={selectedParticipant}
+            />
+            <Button variant="contained" onClick={onParticipantUpdateClick}>
+              Update
+            </Button>
+          </Box>
+        </Dialog>
 
-      <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <DialogTitle>Update Participant</DialogTitle>
-        <Box>
-          <Participant
-            onChange={onParticipantChange}
-            participant={selectedParticipant}
-          />
-          <Button onClick={onParticipanCreateClick}>Create</Button>
-        </Box>
-      </Dialog>
+        <Dialog
+          open={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+        >
+          <DialogTitle>Create new Participant</DialogTitle>
+          <Box p={2}>
+            <Participant
+              onChange={onParticipantChange}
+              participant={selectedParticipant}
+            />
+            <Button variant="contained" onClick={onParticipanCreateClick}>
+              Create
+            </Button>
+          </Box>
+        </Dialog>
 
-      <div>
-        <p>Total results: {totalResults}</p>
-        <p>Page: {page}</p>
-        <p>
-          Pages: {pages} Results per page: {limit}
-        </p>
+        <Button variant="contained" onClick={onOpenCreateModal}>
+          Create new participant
+        </Button>
 
-        <label>
-          Search all fields
-          <input id="search" value={search} onChange={onSearchChange} />
-        </label>
+        <TextField
+          label="Search"
+          id="search"
+          value={search}
+          fullWidth
+          margin="normal"
+          onChange={onSearchChange}
+        />
 
-        <Button onClick={onOpenCreateModal}>Create new participant</Button>
-      </div>
+        <Pagination
+          onNextClicked={() => {
+            setPage(page + 1);
+          }}
+          onPrevClicked={() => {
+            setPage(page - 1);
+          }}
+          page={page}
+          totalPages={pages}
+          totalResults={totalResults}
+          limit={limit}
+        />
 
-      <table>
-        <thead>
-          <tr>
-            <TableHeader>Reference</TableHeader>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Phone Number</TableHeader>
-            <TableHeader>Address</TableHeader>
-            <TableHeader>Postcode</TableHeader>
-            <TableHeader>Date of BirTableHeader</TableHeader>
-            <TableHeader>Trial Status</TableHeader>
-          </tr>
-        </thead>
-
-        <tbody>
-          {participants.map(
-            ({
-              id,
-              name,
-              phoneNumber,
-              address,
-              postcode,
-              dateOfBirth,
-              trialStatus,
-            }) => (
-              <tr key={id}>
-                <th>{id}</th>
-                <td>{name}</td>
-                <td>{phoneNumber}</td>
-                <td>{address}</td>
-                <td>{postcode}</td>
-                <td>{dateOfBirth}</td>
-                <td>{trialStatus}</td>
-                <td>
-                  <IconButton
-                    aria-label="edit"
-                    onClick={onEditParticipantClick(id)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={onDeleteParticipantClick(id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </td>
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-
-      <button onClick={prevPage} disabled={page === 0}>
-        Prev
-      </button>
-      <button onClick={nextPage} disabled={page === pages}>
-        Next
-      </button>
-    </Layout>
+        <ParticipantsTable
+          participants={participants}
+          onEditParticipantClick={onEditParticipantClick}
+          onDeleteParticipantClick={onDeleteParticipantClick}
+        />
+      </Layout>
+    </ThemeProvider>
   );
 }
