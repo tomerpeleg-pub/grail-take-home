@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { Participant } from "../components/Participant";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { ParticipantsTable } from "../components/ParticipantsTable";
-import { Pagination } from "../components/Pagination";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Layout } from "../containers/Layout";
+import { Participant } from "../components/Participant";
+import { ParticipantsTable } from "../components/ParticipantsTable";
+import { Pagination } from "../components/Pagination";
 import {
   getParticipants,
   updateParticipant,

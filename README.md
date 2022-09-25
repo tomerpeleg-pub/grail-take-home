@@ -1,34 +1,41 @@
 ## Grail Take Home interview Tomer Peleg
 
-## Getting Started
+## Running
 
-First, run the development server:
+Run the development server:
 
 ```bash
-npm run dev
-# or
 yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Testing
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Run the unit tests:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```bash
+# Run in watch mode
+yarn test
+# Run in CI mode
+yarn test:ci
+```
 
-## Learn More
+## Incomplete Changes
 
-To learn more about Next.js, take a look at the following resources:
+I ran out of time. This is what I would do given a few more hours:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Finish adding unit tests for the rest of the components and utils. (only Pagination.spec.js is there for now)
+- Move all state logic into a state manager, e.g. redux or mobx.
+- Replace seperate CRUD endpoints (create, delete, update) with a single /participant endpoint and use the request method to determine the desired task. (I created it this way initially for simplicity)
+- Add E2E/Behavioural test.
+- Add functionality for searching by specific field.
+- Add sorting by field.
+- Fix html semantics, add correct aria fields and functionality
+- Mobile styling for the table
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Design Choices
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- I went with Next.js as a base as it provides nice defaults out of the box, so I wouldn't have to spend as much time setting up the project. I don't think it is a bad choice for a project like this, but it is likely unecessary given the simplicity of the task.
+- The task stated not to build an API for this, though in the end I chose to build a very simple one anyway on top of some mock data. In order to get the basic behaviour functioning correctly (the CRUD methods) I would need to implement most of the logic for it anyway, and doing it this way is cleaner for an MVP I think.
+- Originally I intended to create the UI components myself, but I ran out of time so I added Material-ui instead. Without a design this isn't necessarily bad, but it isn't what I would choose in most cases.
